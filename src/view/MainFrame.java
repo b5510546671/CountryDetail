@@ -119,6 +119,7 @@ public class MainFrame extends JFrame {
 		
 		/* Currency */
 		currencyTextField = new JTextField(27);
+		currencyTextField.setEditable(false);
 		currencyTextField.setToolTipText("Ex. Baht");
 		currencyTextField.addKeyListener(new KeyListener() {
 			
@@ -159,6 +160,7 @@ public class MainFrame extends JFrame {
 		
 		/* ISD */
 		ISDTextField = new JTextField(27);
+		ISDTextField.setEditable(false);
 		ISDTextField.setToolTipText("Ex. 66");
 		ISDTextField.addKeyListener(new KeyListener() {
 			
@@ -179,6 +181,7 @@ public class MainFrame extends JFrame {
 		
 		/* GMT */
 		GMTTextField = new JTextField(27);
+		GMTTextField.setEditable(false);
 		GMTTextField.setToolTipText("Ex. +7");
 		GMTTextField.addKeyListener(new KeyListener() {
 			

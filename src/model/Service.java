@@ -80,24 +80,24 @@ public class Service {
 			this.GMT = this.get("GMT", xml2);
 
 		}
-		else if(!countryCurrency.equalsIgnoreCase(this.countryCurrency)){
-			this.countryCurrency = countryCurrency;
-			
-			String xml3 = proxy.getCurrencyCodeByCurrencyName(countryCurrency);
-			this.countryCurrencyCode = this.get("CurrencyCode", xml3);
-			
-			String xml = proxy.getCountryByCurrencyCode(countryCurrencyCode);
-			this.countryName = this.get("Name", xml);
-			
-			String xml2 = proxy.getGMTbyCountry(countryName);
-			this.GMT = this.get("GMT", xml2);
-			
-			String xml1 = proxy.getISD(countryName);
-			this.countryISD = this.get("code", xml1);
-			
-			this.countryCode = this.get("CountryCode", xml);
-			
-		}
+//		else if(!countryCurrency.equalsIgnoreCase(this.countryCurrency)){
+//			this.countryCurrency = countryCurrency;
+//			
+//			String xml3 = proxy.getCurrencyCodeByCurrencyName(countryCurrency);
+//			this.countryCurrencyCode = this.get("CurrencyCode", xml3);
+//			
+//			String xml = proxy.getCountryByCurrencyCode(countryCurrencyCode);
+//			this.countryName = this.get("Name", xml);
+//			
+//			String xml2 = proxy.getGMTbyCountry(countryName);
+//			this.GMT = this.get("GMT", xml2);
+//			
+//			String xml1 = proxy.getISD(countryName);
+//			this.countryISD = this.get("code", xml1);
+//			
+//			this.countryCode = this.get("CountryCode", xml);
+//			
+//		}
 		else if(!countryCurrencyCode.equalsIgnoreCase(this.countryCurrencyCode)){
 			this.countryCurrencyCode = countryCurrencyCode;
 			
@@ -113,7 +113,7 @@ public class Service {
 			this.GMT = this.get("GMT", xml1);
 			this.countryISD = this.get("code",xml2);
 		}
-				
+						
 //		String[] details = {this.countryName, this.countryCode, this.countryCurrency, this.countryCurrencyCode, this.countryISD, this.GMT};
 //		
 //		return details;
