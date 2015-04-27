@@ -7,7 +7,12 @@ public class Main {
 		Country factory = new Country();
 		CountrySoap proxy = factory.getCountrySoap();
 		
+		
+		String thisd = proxy.getCurrencies();
+		
+		String THISD = proxy.getISD("Thailand");
+		
 		String country = proxy.getCountryByCountryCode("TH");
-		System.out.println("Country " + country);
+		System.out.println(THISD);
 	}
 }
