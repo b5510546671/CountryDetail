@@ -3,6 +3,7 @@ package model;
 import javax.swing.SwingWorker;
 import javax.xml.bind.*;
 
+import view.MainFrame;
 import net.webservicex.Country;
 import net.webservicex.CountrySoap;
 
@@ -24,7 +25,10 @@ public class Service {
 	
 	private String GMT;
 	
-	public Service(){
+	private MainFrame gui;
+	
+	public Service(MainFrame gui){
+		this.gui = gui;
 		
 		factory = new Country();
 		proxy = factory.getCountrySoap();
@@ -37,7 +41,7 @@ public class Service {
 		this.GMT = "";
 	}
 	
-	public String[] getCountryDetails(){
+	public String[] getCountryDetails() {
 		String[] details = {this.countryName, this.countryCode, this.countryCurrency, this.countryCurrencyCode, this.countryISD, this.GMT};
 		
 		return details;
@@ -47,7 +51,7 @@ public class Service {
 		
 		//String[] details = {this.countryName, this.countryCode, this.countryCurrency, this.countryCurrencyCode, this.countryISD, this.GMT};
 		
-		if(countryName != this.countryName){
+		if(!countryName.equalsIgnoreCase(this.countryName)){
 			this.countryName = countryName;
 			
 			String xml = proxy.getCurrencyByCountry(this.countryName);
@@ -56,12 +60,12 @@ public class Service {
 			
 			this.countryCode = this.get("CountryCode", xml);
 			this.countryCurrency = this.get("Currency", xml);
-			this.countryCurrency = this.get("CurrencyCode", xml);
+			this.countryCurrencyCode = this.get("CurrencyCode", xml);
 			this.countryISD = this.get("code", xml1);
-			this.GMT = this.get(GMT, xml2);
-//			details = new String[] {this.countryName, this.countryCode, this.get("Currency", xml), this.get("CurrencyCode", xml), this.get("code", xml1), this.get(GMT, xml2)};
+			this.GMT = this.get("GMT", xml2);
+//			details = new String[] {this.countryName, this.countryCode, this.get("Currency", xml), this.get("CurrencyCode", xml), this.get("code", xml1), this.get("GMT", xml2)};
 		}
-		if(countryCode != this.countryCode){
+		else if(!countryCode.equalsIgnoreCase(this.countryCode)){
 			this.countryCode = countryCode;
 			
 			String xml = proxy.getCurrencyByCountry(this.countryName);
@@ -69,14 +73,14 @@ public class Service {
 			String xml2 = proxy.getGMTbyCountry(countryName);
 			String xml3 = proxy.getCountryByCountryCode(countryCode);
 			
-			this.countryName = this.get("Country", xml3);
+			this.countryName = this.get("Name", xml3);
 			this.countryCurrency = this.get("Currency", xml);
 			this.countryCurrencyCode = this.get("CurrencyCode", xml);
 			this.countryISD = this.get("code", xml1);
-			this.GMT = this.get(GMT, xml2);
+			this.GMT = this.get("GMT", xml2);
 
 		}
-		if(countryCurrency != this.countryCurrency){
+		else if(!countryCurrency.equalsIgnoreCase(this.countryCurrency)){
 			this.countryCurrency = countryCurrency;
 			
 			String xml3 = proxy.getCurrencyCodeByCurrencyName(countryCurrency);
@@ -86,7 +90,7 @@ public class Service {
 			this.countryName = this.get("Name", xml);
 			
 			String xml2 = proxy.getGMTbyCountry(countryName);
-			this.GMT = this.get(GMT, xml2);
+			this.GMT = this.get("GMT", xml2);
 			
 			String xml1 = proxy.getISD(countryName);
 			this.countryISD = this.get("code", xml1);
@@ -94,7 +98,7 @@ public class Service {
 			this.countryCode = this.get("CountryCode", xml);
 			
 		}
-		if(countryCurrencyCode != this.countryCurrencyCode){
+		else if(!countryCurrencyCode.equalsIgnoreCase(this.countryCurrencyCode)){
 			this.countryCurrencyCode = countryCurrencyCode;
 			
 			String xml = proxy.getCountryByCurrencyCode(this.countryCurrencyCode);
@@ -116,9 +120,18 @@ public class Service {
 	}
 	
 	private String get(String elementName, String xml) {
-		String value = xml.split(String.format("<%s>", elementName))[1].split(String.format("</%s>", elementName))[0];
+		gui.setStatus(String.format("Getting %s ...", elementName));
+		
+		System.out.println( elementName + "== " + xml);
+		String value = "XXX";
+		try {
+			value = xml.split(String.format("<%s>", elementName))[1].split(String.format("</%s>", elementName))[0];
+		} catch (Exception e) {
+			return e.toString();
+		}
 		if (value.charAt(0) == '<')
 			return null;
+		System.out.println("^^ fin\n\n");
 		return value;
 	}
 

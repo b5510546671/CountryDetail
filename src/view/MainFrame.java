@@ -32,19 +32,10 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.xml.bind.JAXBException;
 
-import controller.FrequencyUnitConverterController;
+
 import model.Service;
 import net.webservicex.CountrySoap;
-import net.webservicex.FrequencyUnitSoap;
-import net.webservicex.Frequencys;
 
-/**
- * Main user interface.
- * Need to be {@link MainFrame#setSoap(FrequencyUnitSoap)} to be able to {@link MainFrame#convert()}.
- * 
- * @author Poramate Homprakob 5510546077
- *
- */
 
 public class MainFrame extends JFrame {
 	
@@ -53,15 +44,13 @@ public class MainFrame extends JFrame {
 	private JTextField countryNameTextField;
 	private JTextField countryCodeTextField;
 	private JTextField currencyTextField;
+	private JTextField currencyCodeTextField;
 	private JTextField ISDTextField;
 	private JTextField GMTTextField;
 	private JButton getButton;
 
 	private JPanel statusPanel;
 	private JLabel statusLabel;
-	
-	/** Soap, forwarded to controller every time it is initialized */
-	private CountrySoap proxy;
 	
 	/** Will be initialized every time convert() invoked to be able to convert many time. */
 	private Service controller;
@@ -72,10 +61,12 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("Contry Detail");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setPreferredSize(new Dimension(450, 180));
+		setPreferredSize(new Dimension(450, 600));
 		setResizable(false);
 		
 		initComponents();
+		
+		controller = new Service(this);
 	}
 
 	/**
@@ -128,7 +119,7 @@ public class MainFrame extends JFrame {
 		
 		/* Currency */
 		currencyTextField = new JTextField(27);
-		currencyTextField.setToolTipText("Ex. THB");
+		currencyTextField.setToolTipText("Ex. Baht");
 		currencyTextField.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -145,6 +136,26 @@ public class MainFrame extends JFrame {
 			public void keyPressed(KeyEvent e) { }
 		});
 		mainPanel.add(currencyTextField);
+		
+		/* CurrencyCode */
+		currencyCodeTextField = new JTextField(27);
+		currencyCodeTextField.setToolTipText("Ex. THB");
+		currencyCodeTextField.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) { }
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					get();
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) { }
+		});
+		mainPanel.add(currencyCodeTextField);
 		
 		/* ISD */
 		ISDTextField = new JTextField(27);
@@ -213,7 +224,7 @@ public class MainFrame extends JFrame {
 		
 		/* Status Panel */
 		statusPanel = new JPanel(new FlowLayout());
-		statusLabel = new JLabel("Preparing...");
+		statusLabel = new JLabel("Done");
 		statusLabel.setPreferredSize(new Dimension((int) this.getPreferredSize().getWidth() - 10, 25));
 		statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		statusPanel.add(statusLabel);
@@ -227,21 +238,15 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	/**
-	 * Set Soap for calling for services.
-	 * If not, cannot call convert().
-	 * @param proxy the Soap for frequency unit converter
-	 */
-	public void setSoap(CountrySoap proxy) {
-		this.proxy = proxy;
-		controller = new Service(proxy, this);
-	}
-	
-	public void setResult(String countryName, String countryCode, String currency, String ISD, String GMT) {
+	public void setResult(String countryName, String countryCode, String currency, String currencyCode, String ISD, String GMT) {
+		System.out.println(currencyCode + "VVV");
 		countryNameTextField.setText(countryName);
 		countryCodeTextField.setText(countryCode);
 		currencyTextField.setText(currency);
+		currencyCodeTextField.setText(currencyCode);
 		ISDTextField.setText(ISD);
+		GMTTextField.setText(GMT);
+		setStatus("Done");
 	}
 	
 	public void setStatus(String status) {
@@ -249,18 +254,9 @@ public class MainFrame extends JFrame {
 	}
 
 	private void get() {
-		if (proxy == null)
-			return;
-		
-		double value = Double.parseDouble(valueTextField.getText().toString());
-		Frequencys from = (Frequencys) fromCombobox.getSelectedItem();
-		Frequencys to = (Frequencys) toCombobox.getSelectedItem();
-		
-		if (controller == null || controller.getState() == StateValue.STARTED || controller.getState() == StateValue.DONE)
-			controller = new FrequencyUnitConverterController(proxy, this);
-		
-//		controller.setParameters(value, from, to);
-//		controller.execute();
-		controller.get(countryNameTextField.getText(), countryCodeTextField.getText(), currencyTextField.getText(), ISDTextField.getText());
+		setStatus("Requesting...");
+		controller.setCountryDetails(countryNameTextField.getText(), countryCodeTextField.getText(), currencyTextField.getText(), currencyCodeTextField.getText());
+		String g[] = controller.getCountryDetails();
+		setResult(g[0], g[1], g[2], g[3], g[4], g[5]);
 	}
 }
