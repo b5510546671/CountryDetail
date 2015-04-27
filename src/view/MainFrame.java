@@ -1,40 +1,21 @@
 package view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker.StateValue;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
-import javax.xml.bind.JAXBException;
-
 
 import model.Service;
-import net.webservicex.CountrySoap;
 
 
 public class MainFrame extends JFrame {
@@ -61,7 +42,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("Contry Detail");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setPreferredSize(new Dimension(450, 600));
+		setPreferredSize(new Dimension(450, 300));
 		setResizable(false);
 		
 		initComponents();
@@ -243,12 +224,12 @@ public class MainFrame extends JFrame {
 	
 	public void setResult(String countryName, String countryCode, String currency, String currencyCode, String ISD, String GMT) {
 		System.out.println(currencyCode + "VVV");
-		countryNameTextField.setText(countryName);
-		countryCodeTextField.setText(countryCode);
-		currencyTextField.setText(currency);
-		currencyCodeTextField.setText(currencyCode);
-		ISDTextField.setText(ISD);
-		GMTTextField.setText(GMT);
+		countryNameTextField.setText(countryName.toUpperCase());
+		countryCodeTextField.setText(countryCode.toUpperCase());
+		currencyTextField.setText(currency.toUpperCase());
+		currencyCodeTextField.setText(currencyCode.toUpperCase());
+		ISDTextField.setText(ISD.toUpperCase());
+		GMTTextField.setText(GMT.toUpperCase());
 		setStatus("Done");
 	}
 	
@@ -258,8 +239,12 @@ public class MainFrame extends JFrame {
 
 	private void get() {
 		setStatus("Requesting...");
-		controller.setCountryDetails(countryNameTextField.getText(), countryCodeTextField.getText(), currencyTextField.getText(), currencyCodeTextField.getText());
-		String g[] = controller.getCountryDetails();
-		setResult(g[0], g[1], g[2], g[3], g[4], g[5]);
+		try {
+			controller.setCountryDetails(countryNameTextField.getText(), countryCodeTextField.getText(), currencyTextField.getText(), currencyCodeTextField.getText());
+			String g[] = controller.getCountryDetails();
+			setResult(g[0], g[1], g[2], g[3], g[4], g[5]);
+		} catch (Exception e) {
+			setResult("Not Found", "", "", "", "", "");
+		}
 	}
 }

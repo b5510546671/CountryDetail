@@ -47,7 +47,7 @@ public class Service {
 		return details;
 	}
 		
-	public void setCountryDetails(String countryName, String countryCode, String countryCurrency, String countryCurrencyCode){
+	public void setCountryDetails(String countryName, String countryCode, String countryCurrency, String countryCurrencyCode) throws Exception {
 		
 		//String[] details = {this.countryName, this.countryCode, this.countryCurrency, this.countryCurrencyCode, this.countryISD, this.GMT};
 		
@@ -55,8 +55,8 @@ public class Service {
 			this.countryName = countryName;
 			
 			String xml = proxy.getCurrencyByCountry(this.countryName);
-			String xml1 = proxy.getISD(countryName);
-			String xml2 = proxy.getGMTbyCountry(countryName);
+			String xml1 = proxy.getISD(this.countryName);
+			String xml2 = proxy.getGMTbyCountry(this.countryName);
 			
 			this.countryCode = this.get("CountryCode", xml);
 			this.countryCurrency = this.get("Currency", xml);
@@ -68,12 +68,14 @@ public class Service {
 		else if(!countryCode.equalsIgnoreCase(this.countryCode)){
 			this.countryCode = countryCode;
 			
-			String xml = proxy.getCurrencyByCountry(this.countryName);
-			String xml1 = proxy.getISD(countryName);
-			String xml2 = proxy.getGMTbyCountry(countryName);
-			String xml3 = proxy.getCountryByCountryCode(countryCode);
+
+			String xml3 = proxy.getCountryByCountryCode(this.countryCode);
 			
 			this.countryName = this.get("Name", xml3);
+			
+			String xml = proxy.getCurrencyByCountry(this.countryName);
+			String xml1 = proxy.getISD(this.countryName);
+			String xml2 = proxy.getGMTbyCountry(this.countryName);
 			this.countryCurrency = this.get("Currency", xml);
 			this.countryCurrencyCode = this.get("CurrencyCode", xml);
 			this.countryISD = this.get("code", xml1);
@@ -113,6 +115,15 @@ public class Service {
 			this.GMT = this.get("GMT", xml1);
 			this.countryISD = this.get("code",xml2);
 		}
+		
+		else{
+			this.countryCode = "";
+			this.countryCurrency = "";
+			this.countryCurrencyCode = "";
+			this.countryISD = "";
+			this.countryName = "";
+			this.GMT = "";
+		}
 						
 //		String[] details = {this.countryName, this.countryCode, this.countryCurrency, this.countryCurrencyCode, this.countryISD, this.GMT};
 //		
@@ -120,18 +131,17 @@ public class Service {
 	}
 	
 	private String get(String elementName, String xml) {
+		elementName = elementName.toUpperCase();
+		xml = xml.toUpperCase();
+		
 		gui.setStatus(String.format("Getting %s ...", elementName));
 		
 		System.out.println( elementName + "== " + xml);
-		String value = "XXX";
-		try {
-			value = xml.split(String.format("<%s>", elementName))[1].split(String.format("</%s>", elementName))[0];
-		} catch (Exception e) {
-			return e.toString();
-		}
+		String value = xml.split(String.format("<%s>", elementName))[1].split(String.format("</%s>", elementName))[0];
+		
 		if (value.charAt(0) == '<')
 			return null;
-		System.out.println("^^ fin\n\n");
+
 		return value;
 	}
 
